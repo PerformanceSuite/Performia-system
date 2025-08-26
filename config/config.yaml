@@ -6,9 +6,42 @@ audio:
   hardware_buffer: 128
   server: supercollider  # or 'web_audio'
   
+# Audio Input Configuration (NEW)
+audio_input:
+  enabled: true
+  device: "Presonus Quantum 2626"  # Your audio interface
+  channels: 2  # Stereo input for guitar
+  buffer_size: 64  # Match main audio buffer
+  analysis:
+    hop_size: 256  # 5.3ms @ 48kHz for low latency
+    fft_size: 1024  # 21ms window for pitch detection
+    threading: true  # Run analysis in separate thread
+    
+# MIDI Controller Configuration (NEW)
+midi:
+  enabled: true
+  device: "Presonus Quantum 2626"  # MIDI through audio interface
+  pedal_mappings:
+    sustain: 64      # CC64 - Main listen trigger
+    mode_change: 65  # CC65 - Cycle listening modes
+    expression: 11   # CC11 - Continuous control
+    tap_tempo: 80    # CC80 - Manual tempo setting
+    
+# Listening Modes Configuration (NEW)
+listening_modes:
+  default: "chord_follow"
+  available:
+    - chord_follow    # Follow and harmonize with chords
+    - call_response   # Respond to musical phrases
+    - rhythmic_sync   # Lock to strumming patterns
+    - ambient_layer   # Create atmospheric textures
+  response_threshold: 0.1  # Minimum input level to trigger response
+  phrase_gap: 0.5  # Seconds of silence to detect phrase end
+  
 agents:
-  count: 4
+  count: 5  # Added listener agent
   roles:
+    - listener  # NEW: Processes guitar input
     - drums
     - bass  
     - melody
@@ -24,12 +57,21 @@ latency:
   target_ms: 15
   measurement: true
   optimization: aggressive
+  # Input processing latency targets (NEW)
+  input_analysis_ms: 5  # Target for audio analysis
+  input_to_agent_ms: 8  # Target for input→agent communication
   
 memory:
   use_shared: true
   buffer_size: 1024
   pattern_memory: 32
+  # Input-specific buffers (NEW)
+  input_buffer_size: 4096  # Samples for input ring buffer
+  phrase_buffer_size: 64   # Events for phrase detection
   
 logging:
   level: INFO
   file: logs/performia.log
+  # Additional logging for input system (NEW)
+  log_analysis: false  # Set to true for detailed analysis logging
+  log_midi: true       # Log MIDI pedal events

@@ -9,7 +9,7 @@ from collections import deque
 from typing import Dict, List, Optional, Any
 import logging
 
-from autogen import ConversableAgent
+from autogen_agentchat.agents import AssistantAgent as ConversableAgent
 
 logger = logging.getLogger(__name__)
 
