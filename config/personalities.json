@@ -1,0 +1,63 @@
+{
+  "personalities": {
+    "jazz_drummer": {
+      "aggression": 0.4,
+      "creativity": 0.8,
+      "stability": 0.6,
+      "preferred_rhythm": "swing",
+      "responsiveness": 0.9,
+      "harmonic_complexity": 0.3,
+      "leader_tendency": 0.5,
+      "call_response": true,
+      "imitation_tendency": 0.2
+    },
+    "rock_bassist": {
+      "aggression": 0.7,
+      "creativity": 0.3,
+      "stability": 0.9,
+      "melodic_range": [28, 52],
+      "preferred_rhythm": "straight",
+      "harmonic_complexity": 0.3,
+      "responsiveness": 0.7,
+      "leader_tendency": 0.3,
+      "call_response": false,
+      "imitation_tendency": 0.4
+    },
+    "ambient_melodist": {
+      "aggression": 0.2,
+      "creativity": 0.9,
+      "stability": 0.4,
+      "melodic_range": [60, 96],
+      "preferred_rhythm": "flowing",
+      "harmonic_complexity": 0.6,
+      "responsiveness": 0.8,
+      "leader_tendency": 0.6,
+      "call_response": true,
+      "imitation_tendency": 0.3
+    },
+    "classical_harmonist": {
+      "aggression": 0.3,
+      "creativity": 0.5,
+      "stability": 0.8,
+      "melodic_range": [48, 72],
+      "preferred_rhythm": "straight",
+      "harmonic_complexity": 0.9,
+      "responsiveness": 0.6,
+      "leader_tendency": 0.7,
+      "call_response": true,
+      "imitation_tendency": 0.2
+    },
+    "electronic_lead": {
+      "aggression": 0.8,
+      "creativity": 0.7,
+      "stability": 0.5,
+      "melodic_range": [48, 96],
+      "preferred_rhythm": "syncopated",
+      "harmonic_complexity": 0.5,
+      "responsiveness": 0.9,
+      "leader_tendency": 0.8,
+      "call_response": true,
+      "imitation_tendency": 0.1
+    }
+  }
+}

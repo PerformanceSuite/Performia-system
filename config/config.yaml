@@ -1,0 +1,35 @@
+# Performia System Configuration
+
+audio:
+  sample_rate: 48000
+  block_size: 64
+  hardware_buffer: 128
+  server: supercollider  # or 'web_audio'
+  
+agents:
+  count: 4
+  roles:
+    - drums
+    - bass  
+    - melody
+    - harmony
+    
+performance:
+  tempo: 120
+  key: 0  # C major (0=C, 1=C#, etc.)
+  time_signature: [4, 4]
+  mode: 0  # 0=major, 1=minor, 2=dorian, 3=phrygian, 4=lydian, 5=mixolydian
+  
+latency:
+  target_ms: 15
+  measurement: true
+  optimization: aggressive
+  
+memory:
+  use_shared: true
+  buffer_size: 1024
+  pattern_memory: 32
+  
+logging:
+  level: INFO
+  file: logs/performia.log

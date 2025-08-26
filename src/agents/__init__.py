@@ -1,0 +1,1 @@
+"""Musical agents module"""

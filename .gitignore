@@ -1,0 +1,56 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Audio files
+*.wav
+*.mp3
+*.aiff
+*.flac
+
+# SuperCollider
+*.scd
+*.scsyndef
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Documentation builds
+docs/_build/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Local configuration overrides
+config/local_config.yaml
+config/*.local.yaml
+
+# Performance data
+performance_logs/
+latency_measurements/
