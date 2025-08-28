@@ -1,0 +1,43 @@
+{
+  "name": "performia-system",
+  "version": "1.0.0",
+  "description": "Ultra-low latency multi-agent musical performance system",
+  "mcp_config": {
+    "servers": {
+      "performia": {
+        "name": "Performia MCP",
+        "description": "Pattern recognition and musical intelligence",
+        "path": "../Custom_MCP/Performia_MCP",
+        "command": "node",
+        "args": ["index.js"],
+        "env": {
+          "PERFORMIA_MODE": "studio",
+          "PERFORMIA_DATA_PATH": "./data"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "start": "./start_live.sh",
+    "studio": "./start_studio.sh",
+    "mcp": "cd ../Custom_MCP/Performia_MCP && npm start",
+    "test": "python -m pytest tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PerformanceSuite/Performia-system.git"
+  },
+  "keywords": [
+    "music",
+    "ai",
+    "real-time",
+    "performance",
+    "multi-agent"
+  ],
+  "author": "Performia Team",
+  "license": "MIT",
+  "notes": {
+    "mcp_location": "The Performia MCP is maintained separately in ../Custom_MCP/Performia_MCP",
+    "security": "MCP contains proprietary algorithms and should not be open-sourced"
+  }
+}

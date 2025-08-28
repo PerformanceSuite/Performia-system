@@ -54,3 +54,11 @@ config/*.local.yaml
 # Performance data
 performance_logs/
 latency_measurements/
+
+# MCP Servers (kept separate)
+PerformiaMCP/
+Custom_MCP/
+*_MCP/
+
+# Note: The Performia MCP is maintained separately in ../Custom_MCP/
+# This ensures proprietary pattern recognition stays out of open source
