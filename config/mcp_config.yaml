@@ -1,0 +1,44 @@
+# MCP Connection Configuration
+# This file configures how Performia connects to the external MCP server
+
+mcp:
+  # Server location (relative to project root)
+  path: "../Custom_MCP/Performia_MCP"
+  
+  # Connection settings
+  host: "localhost"
+  port: 3000
+  
+  # API endpoints
+  endpoints:
+    patterns: "/api/patterns"
+    songs: "/api/songs"
+    learning: "/api/learning"
+    recognition: "/api/recognition"
+  
+  # Performance settings
+  cache:
+    enabled: true
+    size_mb: 512
+    ttl_seconds: 3600
+  
+  # Modes
+  studio:
+    enable_learning: true
+    save_patterns: true
+    analysis_depth: "deep"
+  
+  live:
+    cache_only: true
+    max_latency_ms: 0.1
+    fallback_to_rules: true
+
+# Security
+authentication:
+  enabled: false  # Enable in production
+  api_key: ""     # Set via environment variable in production
+
+# Logging
+logging:
+  level: "info"
+  file: "logs/mcp_client.log"
