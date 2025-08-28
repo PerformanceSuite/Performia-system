@@ -8,9 +8,9 @@ Performia System is an ultra-low latency multi-agent musical performance system 
 - 2-5 AI agents with distinct personalities performing together in real-time
 - Real-time audio input support for interactive performances with live musicians  
 - <15ms total system latency (3-7ms typical)
-- SuperCollider audio synthesis engine
+- SuperCollider audio synthesis engine (using supernova for multi-core processing)
 - AutoGen orchestration framework
-- Web-based GUI for monitoring and control
+- Modern web-based GUI with real-time visualization and mixing controls
 
 ## Key Commands
 
@@ -40,6 +40,10 @@ python src/main.py --enable-input
 
 # Start GUI separately  
 ./start_gui.sh
+
+# Access the GUI
+# Modern GUI (default): http://localhost:5000
+# Classic GUI: http://localhost:5000/classic
 ```
 
 ### Testing
@@ -157,7 +161,9 @@ When adding new features:
 1. New agent types: Inherit from `BaseMusicalAgent` and implement `generate_and_play()`
 2. New listening modes: Modify `src/agents/listener_agent.py`
 3. MIDI mappings: Update `config/config.yaml` pedal_mappings section
-4. GUI features: Work in `gui/` directory with Node.js/Express setup
+4. GUI features: Work in `gui/` directory with Flask/SocketIO setup
+   - Modern GUI: `gui/templates/index_new.html`, `gui/static/style_new.css`, `gui/static/main_new.js`
+   - Classic GUI: `gui/templates/index.html`, `gui/static/style.css`, `gui/static/main.js`
 
 When debugging latency issues:
 1. Check buffer sizes in config (reduce to 64 samples if possible)

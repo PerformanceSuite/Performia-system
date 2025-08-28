@@ -18,9 +18,21 @@ trap cleanup INT TERM
 
 # Start SuperCollider server in background
 echo "Starting SuperCollider server..."
-scsynth -u 57110 &
-SCSYNTH_PID=$!
-sleep 2
+SCSYNTH_PATH="/Applications/SuperCollider.app/Contents/Resources/scsynth"
+if [ -f "$SCSYNTH_PATH" ]; then
+    $SCSYNTH_PATH -u 57110 &
+    SCSYNTH_PID=$!
+    sleep 2
+    echo "✓ SuperCollider server started"
+    
+    # Load SynthDefs
+    echo "Loading SynthDefs..."
+    if [ -f scripts/auto_load_synthdefs.py ]; then
+        python scripts/auto_load_synthdefs.py 2>/dev/null || true
+    fi
+else
+    echo "⚠ SuperCollider server not found, continuing without audio"
+fi
 
 # Start the main Python backend
 echo "Starting Performia backend..."
