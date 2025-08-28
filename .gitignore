@@ -62,3 +62,19 @@ Custom_MCP/
 
 # Note: The Performia MCP is maintained separately in ../Custom_MCP/
 # This ensures proprietary pattern recognition stays out of open source
+
+# JUCE Framework (download separately)
+PerformiaJUCE/JUCE/
+PerformiaJUCE/build/
+
+# Next.js/React GUI
+gui/node_modules/
+gui/.next/
+gui/out/
+gui/build/
+gui/dist/
+gui/*.log
+
+# Old backups
+gui/old_versions_backup/
+
