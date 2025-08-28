@@ -3,273 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Performia System Control Center</title>
+    <title>Performia</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>🎵 Performia System Control Center</h1>
-            <div class="status-bar">
-                <span id="system-status" class="status-indicator offline">● System Offline</span>
-                <span id="latency-display">Latency: --ms</span>
-                <span id="cpu-display">CPU: --%</span>
-            </div>
-        </header>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">PERFORMIA</div>
+        <button id="testToneBtn" class="btn btn-primary">Test Tone</button>
+    </header>
 
-        <!-- Main Controls -->
-        <div class="main-controls">
-            <div class="control-section">
-                <h2>System Control</h2>
-                <div class="button-group">
-                    <button id="start-btn" class="btn btn-primary">Start System</button>
-                    <button id="stop-btn" class="btn btn-danger" disabled>Stop System</button>
-                </div>
-                <div class="mode-selector">
-                    <label>
-                        <input type="radio" name="mode" value="autonomous" checked>
-                        Autonomous Mode
-                    </label>
-                    <label>
-                        <input type="radio" name="mode" value="interactive">
-                        Interactive Mode (Guitar Input)
-                    </label>
-                </div>
-            </div>
-
-            <!-- Musical Parameters -->
-            <div class="control-section">
-                <h2>Musical Parameters</h2>
-                <div class="parameter-grid">
-                    <div class="parameter">
-                        <label for="tempo">Tempo (BPM)</label>
-                        <input type="range" id="tempo" min="60" max="180" value="120">
-                        <span id="tempo-value">120</span>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar (Collapsible) -->
+        <aside class="sidebar left-sidebar" id="leftSidebar">
+            <button class="sidebar-toggle" onclick="toggleSidebar('left')">
+                <span class="toggle-icon">◀</span>
+            </button>
+            
+            <div class="sidebar-content">
+                <div class="panel">
+                    <h3>Audio Settings</h3>
+                    
+                    <div class="control-group">
+                        <label>Audio Driver</label>
+                        <select id="audioDriver" class="select-control">
+                            <option>Quantum 2626</option>
+                            <option>Mac Studio Speakers</option>
+                            <option>Built-in Audio</option>
+                        </select>
                     </div>
-                    <div class="parameter">
-                        <label for="key">Key</label>
-                        <select id="key">
-                            <option value="0">C Major</option>
-                            <option value="1">C# Major</option>
-                            <option value="2">D Major</option>
-                            <option value="3">D# Major</option>
-                            <option value="4">E Major</option>
-                            <option value="5">F Major</option>
-                            <option value="6">F# Major</option>
-                            <option value="7">G Major</option>
-                            <option value="8">G# Major</option>
-                            <option value="9">A Major</option>
-                            <option value="10">A# Major</option>
-                            <option value="11">B Major</option>
+                    
+                    <div class="control-group">
+                        <label>Sample Rate</label>
+                        <select id="sampleRate" class="select-control">
+                            <option>44100 Hz</option>
+                            <option>48000 Hz</option>
+                            <option selected>96000 Hz</option>
+                            <option>192000 Hz</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Buffer Size</label>
+                        <select id="bufferSize" class="select-control">
+                            <option>64 samples</option>
+                            <option>128 samples</option>
+                            <option>256 samples</option>
+                            <option selected>512 samples</option>
+                            <option>1024 samples</option>
                         </select>
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Input Controls (shown in interactive mode) -->
-        <div id="input-controls" class="control-section" style="display: none;">
-            <h2>🎸 Input Controls</h2>
-            <div class="input-grid">
-                <div class="input-meter">
-                    <label>Input Level</label>
+        <!-- Center Content -->
+        <main class="main-content">
+            <!-- I/O Levels -->
+            <div class="io-meters">
+                <div class="meter-group">
+                    <label>Input</label>
                     <div class="meter-container">
-                        <div id="input-level" class="meter-bar"></div>
+                        <div class="meter-bar">
+                            <div id="inputLevel" class="meter-fill input-meter"></div>
+                        </div>
+                        <span class="meter-value" id="inputValue">-∞ dB</span>
                     </div>
                 </div>
-                <div class="detected-chord">
-                    <label>Detected Chord</label>
-                    <div id="chord-display" class="chord-box">--</div>
+                
+                <div class="meter-group">
+                    <label>Output</label>
+                    <div class="meter-container">
+                        <div class="meter-bar">
+                            <div id="outputLevel" class="meter-fill output-meter"></div>
+                        </div>
+                        <span class="meter-value" id="outputValue">-∞ dB</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Agent Tracks -->
+            <div class="agent-tracks">
+                <!-- Drums Track -->
+                <div class="track" data-agent="drums">
+                    <div class="track-header">
+                        <h4>DRUMS</h4>
+                        <div class="track-buttons">
+                            <button class="btn-small btn-mute" data-agent="drums">M</button>
+                            <button class="btn-small btn-solo" data-agent="drums">S</button>
+                        </div>
+                    </div>
+                    <div class="track-controls">
+                        <input type="range" class="track-slider" id="drumVolume" min="0" max="100" value="70">
+                        <div class="track-meter">
+                            <div class="track-level" id="drumLevel"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bass Track -->
+                <div class="track" data-agent="bass">
+                    <div class="track-header">
+                        <h4>BASS</h4>
+                        <div class="track-buttons">
+                            <button class="btn-small btn-mute" data-agent="bass">M</button>
+                            <button class="btn-small btn-solo" data-agent="bass">S</button>
+                        </div>
+                    </div>
+                    <div class="track-controls">
+                        <input type="range" class="track-slider" id="bassVolume" min="0" max="100" value="70">
+                        <div class="track-meter">
+                            <div class="track-level" id="bassLevel"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Melody Track -->
+                <div class="track" data-agent="melody">
+                    <div class="track-header">
+                        <h4>MELODY</h4>
+                        <div class="track-buttons">
+                            <button class="btn-small btn-mute" data-agent="melody">M</button>
+                            <button class="btn-small btn-solo" data-agent="melody">S</button>
+                        </div>
+                    </div>
+                    <div class="track-controls">
+                        <input type="range" class="track-slider" id="melodyVolume" min="0" max="100" value="70">
+                        <div class="track-meter">
+                            <div class="track-level" id="melodyLevel"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Harmony Track -->
+                <div class="track" data-agent="harmony">
+                    <div class="track-header">
+                        <h4>HARMONY</h4>
+                        <div class="track-buttons">
+                            <button class="btn-small btn-mute" data-agent="harmony">M</button>
+                            <button class="btn-small btn-solo" data-agent="harmony">S</button>
+                        </div>
+                    </div>
+                    <div class="track-controls">
+                        <input type="range" class="track-slider" id="harmonyVolume" min="0" max="100" value="70">
+                        <div class="track-meter">
+                            <div class="track-level" id="harmonyLevel"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Listener Track -->
+                <div class="track" data-agent="listener">
+                    <div class="track-header">
+                        <h4>LISTENER</h4>
+                        <div class="track-buttons">
+                            <button class="btn-small btn-mute" data-agent="listener">M</button>
+                            <button class="btn-small btn-solo" data-agent="listener">S</button>
+                        </div>
+                    </div>
+                    <div class="track-controls">
+                        <input type="range" class="track-slider" id="listenerVolume" min="0" max="100" value="70">
+                        <div class="track-meter">
+                            <div class="track-level" id="listenerLevel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar (Collapsible) -->
+        <aside class="sidebar right-sidebar" id="rightSidebar">
+            <button class="sidebar-toggle" onclick="toggleSidebar('right')">
+                <span class="toggle-icon">▶</span>
+            </button>
             
-            <div class="listening-modes">
-                <h3>Listening Mode</h3>
-                <div class="mode-buttons">
-                    <button class="mode-btn active" data-mode="chord_follow">Chord Follow</button>
-                    <button class="mode-btn" data-mode="call_response">Call & Response</button>
-                    <button class="mode-btn" data-mode="rhythmic_sync">Rhythmic Sync</button>
-                    <button class="mode-btn" data-mode="ambient_layer">Ambient Layer</button>
-                </div>
-            </div>
-            
-            <div class="virtual-pedals">
-                <h3>Virtual Pedals</h3>
-                <div class="pedal-row">
-                    <button class="pedal-btn" data-pedal="sustain">
-                        <div class="pedal-icon">🦶</div>
-                        Sustain (Listen)
-                    </button>
-                    <button class="pedal-btn" data-pedal="mode">
-                        <div class="pedal-icon">🔄</div>
-                        Cycle Mode
-                    </button>
-                    <button class="pedal-btn" data-pedal="tap">
-                        <div class="pedal-icon">⏱️</div>
-                        Tap Tempo
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Agent Controls -->
-        <div class="agents-section">
-            <h2>Agent Personalities</h2>
-            <div class="agents-grid">
-                <!-- Drums Agent -->
-                <div class="agent-card" data-agent="drums">
-                    <h3>🥁 Drums</h3>
-                    <div class="personality-sliders">
-                        <div class="slider-group">
-                            <label>Aggression</label>
-                            <input type="range" class="personality-slider" data-param="aggression" min="0" max="100" value="50">
-                            <span class="slider-value">0.5</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Creativity</label>
-                            <input type="range" class="personality-slider" data-param="creativity" min="0" max="100" value="30">
-                            <span class="slider-value">0.3</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Responsiveness</label>
-                            <input type="range" class="personality-slider" data-param="responsiveness" min="0" max="100" value="60">
-                            <span class="slider-value">0.6</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Stability</label>
-                            <input type="range" class="personality-slider" data-param="stability" min="0" max="100" value="80">
-                            <span class="slider-value">0.8</span>
-                        </div>
+            <div class="sidebar-content">
+                <div class="panel">
+                    <h3>Agent Parameters</h3>
+                    
+                    <div class="control-group">
+                        <label>Aggression</label>
+                        <input type="range" class="param-slider" id="aggression" min="0" max="100" value="50">
                     </div>
-                    <div class="agent-status">
-                        <span class="activity-indicator">●</span>
-                        <span class="activity-text">Idle</span>
+                    
+                    <div class="control-group">
+                        <label>Creativity</label>
+                        <input type="range" class="param-slider" id="creativity" min="0" max="100" value="50">
                     </div>
-                </div>
-
-                <!-- Bass Agent -->
-                <div class="agent-card" data-agent="bass">
-                    <h3>🎸 Bass</h3>
-                    <div class="personality-sliders">
-                        <div class="slider-group">
-                            <label>Aggression</label>
-                            <input type="range" class="personality-slider" data-param="aggression" min="0" max="100" value="30">
-                            <span class="slider-value">0.3</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Creativity</label>
-                            <input type="range" class="personality-slider" data-param="creativity" min="0" max="100" value="40">
-                            <span class="slider-value">0.4</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Responsiveness</label>
-                            <input type="range" class="personality-slider" data-param="responsiveness" min="0" max="100" value="70">
-                            <span class="slider-value">0.7</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Stability</label>
-                            <input type="range" class="personality-slider" data-param="stability" min="0" max="100" value="70">
-                            <span class="slider-value">0.7</span>
-                        </div>
+                    
+                    <div class="control-group">
+                        <label>Responsiveness</label>
+                        <input type="range" class="param-slider" id="responsiveness" min="0" max="100" value="50">
                     </div>
-                    <div class="agent-status">
-                        <span class="activity-indicator">●</span>
-                        <span class="activity-text">Idle</span>
-                    </div>
-                </div>
-
-                <!-- Melody Agent -->
-                <div class="agent-card" data-agent="melody">
-                    <h3>🎹 Melody</h3>
-                    <div class="personality-sliders">
-                        <div class="slider-group">
-                            <label>Aggression</label>
-                            <input type="range" class="personality-slider" data-param="aggression" min="0" max="100" value="20">
-                            <span class="slider-value">0.2</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Creativity</label>
-                            <input type="range" class="personality-slider" data-param="creativity" min="0" max="100" value="80">
-                            <span class="slider-value">0.8</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Responsiveness</label>
-                            <input type="range" class="personality-slider" data-param="responsiveness" min="0" max="100" value="50">
-                            <span class="slider-value">0.5</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Stability</label>
-                            <input type="range" class="personality-slider" data-param="stability" min="0" max="100" value="40">
-                            <span class="slider-value">0.4</span>
-                        </div>
-                    </div>
-                    <div class="agent-status">
-                        <span class="activity-indicator">●</span>
-                        <span class="activity-text">Idle</span>
-                    </div>
-                </div>
-
-                <!-- Harmony Agent -->
-                <div class="agent-card" data-agent="harmony">
-                    <h3>🎼 Harmony</h3>
-                    <div class="personality-sliders">
-                        <div class="slider-group">
-                            <label>Aggression</label>
-                            <input type="range" class="personality-slider" data-param="aggression" min="0" max="100" value="10">
-                            <span class="slider-value">0.1</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Creativity</label>
-                            <input type="range" class="personality-slider" data-param="creativity" min="0" max="100" value="60">
-                            <span class="slider-value">0.6</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Responsiveness</label>
-                            <input type="range" class="personality-slider" data-param="responsiveness" min="0" max="100" value="90">
-                            <span class="slider-value">0.9</span>
-                        </div>
-                        <div class="slider-group">
-                            <label>Stability</label>
-                            <input type="range" class="personality-slider" data-param="stability" min="0" max="100" value="60">
-                            <span class="slider-value">0.6</span>
-                        </div>
-                    </div>
-                    <div class="agent-status">
-                        <span class="activity-indicator">●</span>
-                        <span class="activity-text">Idle</span>
+                    
+                    <div class="control-group">
+                        <label>Stability</label>
+                        <input type="range" class="param-slider" id="stability" min="0" max="100" value="50">
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Performance Metrics -->
-        <div class="metrics-section">
-            <h2>Performance Metrics</h2>
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <canvas id="latency-chart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <canvas id="activity-chart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Presets -->
-        <div class="presets-section">
-            <h2>Personality Presets</h2>
-            <div class="preset-buttons">
-                <button class="preset-btn" data-preset="jazz">Jazz Ensemble</button>
-                <button class="preset-btn" data-preset="rock">Rock Band</button>
-                <button class="preset-btn" data-preset="ambient">Ambient</button>
-                <button class="preset-btn" data-preset="experimental">Experimental</button>
-                <button class="preset-btn" data-preset="classical">Classical</button>
-            </div>
-        </div>
+        </aside>
     </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="status-bar">
+        <div class="status-item">
+            <span class="status-label">Latency:</span>
+            <span class="status-value" id="latencyDisplay">-- ms</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">CPU:</span>
+            <span class="status-value" id="cpuDisplay">--%</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Memory:</span>
+            <span class="status-value" id="memoryDisplay">-- MB</span>
+        </div>
+        <div class="status-item">
+            <span class="status-indicator" id="statusIndicator">●</span>
+            <span class="status-label" id="statusText">Disconnected</span>
+        </div>
+    </footer>
 
     <script src="/static/main.js"></script>
 </body>

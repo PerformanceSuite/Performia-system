@@ -212,6 +212,129 @@ def handle_update_key(data):
         except Exception as e:
             emit('error', {'message': str(e)})
 
+@socketio.on('test_tone')
+def handle_test_tone():
+    """Play a test tone"""
+    try:
+        if performia_system:
+            performia_system.play_test_tone()
+        emit('test_tone_played', broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('set_audio_driver')
+def handle_set_audio_driver(data):
+    """Set audio driver"""
+    driver = data.get('driver')
+    try:
+        if performia_system:
+            performia_system.set_audio_driver(driver)
+        emit('audio_driver_changed', {'driver': driver}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('set_sample_rate')
+def handle_set_sample_rate(data):
+    """Set sample rate"""
+    rate = data.get('rate')
+    try:
+        if performia_system:
+            performia_system.set_sample_rate(rate)
+        emit('sample_rate_changed', {'rate': rate}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('set_buffer_size')
+def handle_set_buffer_size(data):
+    """Set buffer size"""
+    size = data.get('size')
+    try:
+        if performia_system:
+            performia_system.set_buffer_size(size)
+        emit('buffer_size_changed', {'size': size}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('mute_agent')
+def handle_mute_agent(data):
+    """Mute/unmute an agent"""
+    agent = data.get('agent')
+    muted = data.get('muted', False)
+    try:
+        if performia_system:
+            performia_system.mute_agent(agent, muted)
+        emit('agent_muted', {'agent': agent, 'muted': muted}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('solo_agent')
+def handle_solo_agent(data):
+    """Solo/unsolo an agent"""
+    agent = data.get('agent')
+    solo = data.get('solo', False)
+    try:
+        if performia_system:
+            performia_system.solo_agent(agent, solo)
+        emit('agent_solo', {'agent': agent, 'solo': solo}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('set_agent_volume')
+def handle_set_agent_volume(data):
+    """Set agent volume"""
+    agent = data.get('agent')
+    volume = data.get('volume', 0.7)
+    try:
+        if performia_system:
+            performia_system.set_agent_volume(agent, volume)
+        emit('agent_volume_changed', {'agent': agent, 'volume': volume}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('set_parameter')
+def handle_set_parameter(data):
+    """Set performance parameter"""
+    param = data.get('param')
+    value = data.get('value')
+    try:
+        if performia_system:
+            performia_system.set_parameter(param, value)
+        emit('parameter_changed', {'param': param, 'value': value}, broadcast=True)
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+@socketio.on('get_metrics')
+def handle_get_metrics():
+    """Get current system metrics"""
+    try:
+        metrics = {
+            'latency': 5.3,  # Placeholder - will be replaced with actual metrics
+            'cpu': 12.5,
+            'memory': 256
+        }
+        
+        # Get actual I/O levels if available
+        audio_levels = {
+            'input': -12.5,
+            'output': -8.2
+        }
+        
+        # Get agent levels
+        agent_levels = {
+            'drums': -10.5,
+            'bass': -12.0,
+            'melody': -15.3,
+            'harmony': -14.2,
+            'listener': -18.5
+        }
+        
+        emit('system_metrics', metrics)
+        emit('audio_levels', audio_levels)
+        emit('agent_levels', agent_levels)
+        
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
 def monitor_system():
     """Background thread to monitor system metrics"""
     while True:

@@ -1,258 +1,205 @@
 # Performia System GUI
 
-A modern web-based control interface for the Performia System, providing real-time control and monitoring of the multi-agent musical performance system.
+A professional web-based control interface for the Performia System, providing real-time control and monitoring of the multi-agent musical performance system.
 
-## Features
+## Current Status (December 2024)
 
-### 🎛️ System Control
-- **One-click start/stop** of the entire system
-- **Mode selection**: Autonomous or Interactive (with guitar input)
-- **Real-time status monitoring**: Latency, CPU usage, active agents
+**🚧 UNDER ACTIVE DEVELOPMENT 🚧**
 
-### 🎸 Interactive Mode Controls
-- **Input level meter** with real-time visualization
-- **Chord detection display** showing recognized chords
-- **Four listening modes**: Chord Follow, Call & Response, Rhythmic Sync, Ambient Layer
-- **Virtual MIDI pedals** for hands-free control simulation
+The GUI is functional but still being improved. Current implementation includes basic controls and monitoring, with more features being added.
 
-### 🎭 Agent Personality Control
-- **Live adjustment** of all personality parameters per agent
-- **Visual feedback** showing agent activity status
-- **Real-time parameter updates** without system restart
+## Working Features ✅
 
-### 📊 Performance Monitoring
-- **Latency graph** showing system performance over time
-- **Agent activity visualization** with color-coded bars
-- **Live metrics updates** at 10Hz refresh rate
+### System Control
+- **Flask/SocketIO backend** with WebSocket real-time communication
+- **Agent track controls** for Drums, Bass, Melody, Harmony, and Listener
+- **Volume sliders** for each agent (0-100%)
+- **Mute/Solo buttons** for each track
+- **Test tone generator** for audio testing
 
-### 🎨 Presets
-- **Jazz Ensemble**: Smooth, creative, responsive
-- **Rock Band**: Aggressive, stable, driving
-- **Ambient**: Ethereal, evolving, atmospheric
-- **Experimental**: Chaotic, creative, unpredictable
-- **Classical**: Structured, stable, harmonious
+### Audio Configuration
+- **Audio driver selection** dropdown
+- **Sample rate selection** (44.1kHz, 48kHz, 96kHz, 192kHz)
+- **Buffer size selection** (64-1024 samples)
+
+### Real-time Monitoring
+- **Input/Output level meters** with dB display
+- **Status bar** with connection indicator
+- **Latency, CPU, and Memory usage** displays (placeholders)
+
+### User Interface
+- **Professional DAW-style dark theme**
+- **Collapsible sidebars** for better screen usage
+- **Responsive layout** adapts to screen size
+
+## Features In Development 🔧
+
+### System Control (TODO)
+- [ ] Actual start/stop system functionality
+- [ ] Mode selection (Autonomous/Interactive)
+- [ ] Emergency stop button
+- [ ] System reset functionality
+
+### Agent Personality Control (TODO)
+- [ ] Individual personality sliders per agent
+- [ ] Aggression parameter control
+- [ ] Creativity parameter control  
+- [ ] Responsiveness parameter control
+- [ ] Stability parameter control
+- [ ] Preset management system
+
+### Interactive Mode (TODO)
+- [ ] Guitar/audio input monitoring
+- [ ] Chord detection display
+- [ ] Listening mode selection (Chord Follow, Call & Response, etc.)
+- [ ] Virtual MIDI pedals
+
+### Performance Monitoring (TODO)
+- [ ] Real latency measurement from system
+- [ ] Actual CPU usage monitoring
+- [ ] Memory usage tracking
+- [ ] Agent activity visualization
+- [ ] Historical performance graphs
+
+### Presets System (TODO)
+- [ ] Jazz Ensemble preset
+- [ ] Rock Band preset
+- [ ] Ambient preset
+- [ ] Experimental preset
+- [ ] Classical preset
+- [ ] Custom preset save/load
 
 ## Quick Start
 
-### Option 1: Use the launcher script
-```bash
-chmod +x start_gui.sh
-./start_gui.sh
-```
+### Installation
 
-### Option 2: Manual start
 ```bash
-# Install dependencies
+# Install Python dependencies
+cd gui
 pip install flask flask-socketio eventlet
 
-# Start the GUI server
+# Install SuperCollider (if not already installed)
+brew install supercollider  # macOS
+```
+
+### Running the GUI
+
+```bash
+# From the project root
 cd gui
 python app.py
 ```
 
-Then open your browser to: **http://localhost:5000**
+Then open your browser to: **http://localhost:5001**
 
-## Interface Overview
+## Project Structure
 
-### Main Controls
-- **Start/Stop System**: Primary system control
-- **Mode Selection**: Choose between autonomous and interactive modes
-- **Tempo Control**: Adjust BPM from 60-180
-- **Key Selection**: Choose musical key
-
-### Input Section (Interactive Mode)
-- **Input Level Meter**: Shows real-time audio input level
-- **Chord Display**: Shows detected chord in large text
-- **Listening Mode Buttons**: Quick mode switching
-- **Virtual Pedals**: Simulate MIDI pedal actions
-
-### Agent Cards
-Each agent has individual controls for:
-- Aggression (dynamics, dissonance)
-- Creativity (pattern variation)
-- Responsiveness (interaction level)
-- Stability (pattern consistency)
-
-### Charts Section
-- **Latency Chart**: Historical latency tracking
-- **Activity Chart**: Agent activity levels
-
-## Keyboard Shortcuts
-
-- `Space`: Start/Stop system
-- `1-4`: Select listening mode (in interactive mode)
-- `P`: Trigger sustain pedal
-- `M`: Cycle listening mode
-- `T`: Tap tempo
+```
+gui/
+├── app.py                 # Flask server with SocketIO
+├── templates/
+│   └── index.html        # Main HTML interface
+├── static/
+│   ├── style.css         # DAW-style dark theme
+│   └── main.js           # Client-side JavaScript
+├── old_versions_backup/   # Previous GUI versions (archived)
+└── README.md             # This file
+```
 
 ## API Endpoints
 
-The GUI also exposes REST API endpoints:
+Currently implemented endpoints:
 
-- `GET /api/status`: Current system status
-- `GET /api/presets`: Available personality presets
-- `POST /api/start`: Start the system
-- `POST /api/stop`: Stop the system
-- `POST /api/agent/:id/personality`: Update agent personality
-- `POST /api/tempo`: Set tempo
-- `POST /api/key`: Set musical key
+### HTTP Routes
+- `GET /` - Main GUI interface
+- `GET /static/<path>` - Static file serving
 
-## WebSocket Events
+### WebSocket Events (Client → Server)
+- `connect` - Initial connection
+- `test_tone` - Trigger test tone
+- `set_audio_driver` - Change audio driver
+- `set_sample_rate` - Change sample rate
+- `set_buffer_size` - Change buffer size
+- `mute_agent` - Mute/unmute agent
+- `solo_agent` - Solo/unsolo agent  
+- `set_agent_volume` - Adjust agent volume
+- `set_parameter` - Adjust personality parameter
 
-The GUI uses Socket.IO for real-time communication:
+### WebSocket Events (Server → Client)
+- `state_update` - Full system state
+- `audio_levels` - Real-time audio levels
+- `system_metrics` - Performance metrics
+- `error` - Error messages
 
-### Client → Server Events
-- `start_system`: Start with specified mode
-- `stop_system`: Stop the system
-- `update_agent`: Update agent personality
-- `set_listening_mode`: Change listening mode
-- `trigger_pedal`: Simulate pedal press
-- `update_tempo`: Change tempo
-- `update_key`: Change musical key
+## Development Notes
 
-### Server → Client Events
-- `state_update`: Full system state
-- `system_started`: Confirmation of start
-- `system_stopped`: Confirmation of stop
-- `metrics_update`: Performance metrics
-- `input_update`: Audio input level and chord
-- `agents_update`: Agent activity status
-- `error`: Error messages
+### Current Architecture
+- **Backend**: Flask + Flask-SocketIO for WebSocket communication
+- **Frontend**: Vanilla JavaScript with Socket.IO client
+- **Styling**: Custom CSS with DAW-inspired dark theme
+- **Update Rate**: 10Hz for real-time updates (planned)
 
-## Customization
+### Known Issues
+1. **System connection**: GUI runs but isn't fully connected to the actual Performia System yet
+2. **Metrics**: Performance metrics are placeholders
+3. **Agent control**: Agent parameters don't affect actual synthesis yet
+4. **Audio I/O**: Level meters show placeholder data
 
-### Adding New Presets
+### Next Steps
+1. Complete backend integration with Performia System
+2. Implement real agent personality control
+3. Add performance monitoring from actual system
+4. Create preset management system
+5. Implement interactive mode features
+6. Add visualization components
+7. Improve error handling and user feedback
 
-Edit the presets object in `static/main.js`:
+## Contributing
 
-```javascript
-const presets = {
-    mypreset: {
-        drums: { aggression: 0.5, creativity: 0.5, ... },
-        bass: { aggression: 0.5, creativity: 0.5, ... },
-        // etc.
-    }
-};
-```
+When working on the GUI:
 
-### Changing Color Scheme
+1. **Test changes locally** before committing
+2. **Maintain DAW aesthetic** - keep the professional audio interface look
+3. **Preserve real-time performance** - avoid blocking operations
+4. **Update this README** when adding new features
+5. **Comment your code** - especially WebSocket events
 
-Edit CSS variables in `static/style.css`:
+## Technical Requirements
 
-```css
-:root {
-    --primary-color: #your-color;
-    --bg-primary: #your-background;
-    /* etc. */
-}
-```
-
-### Adding New Listening Modes
-
-1. Add mode to the HTML template
-2. Register handler in `main.js`
-3. Implement mode logic in backend
+- Python 3.8+
+- Modern web browser (Chrome, Firefox, Safari)
+- SuperCollider (for audio synthesis)
+- Low-latency audio interface (recommended)
 
 ## Troubleshooting
 
 ### GUI Won't Start
 - Check Flask is installed: `pip install flask flask-socketio`
-- Ensure port 5000 is available
+- Ensure port 5001 is available
 - Check Python version (3.8+ required)
 
 ### Can't Connect to System
-- Verify Performia System is in the parent directory
+- Verify Performia System modules are in parent directory
 - Check import paths in `app.py`
 - Ensure all dependencies are installed
 
-### Real-time Updates Not Working
-- Check WebSocket connection in browser console
-- Verify eventlet is installed
-- Try different browser if issues persist
+### No Audio
+- SuperCollider must be installed and running
+- Check audio driver selection in GUI
+- Verify system audio settings
 
-### Audio Input Not Showing
-- Ensure interactive mode is selected
-- Check audio interface is connected
-- Verify input system is initialized
+## Future Vision
 
-## Performance Tips
-
-### For Best Performance
-- Use Chrome or Firefox (latest versions)
-- Keep charts visible for monitoring
-- Close unnecessary browser tabs
-- Run on same machine as Performia System
-
-### Reducing Latency
-- Minimize update frequency if needed
-- Disable charts if not monitoring
-- Use wired network connection
-- Close other applications
-
-## Development
-
-### Project Structure
-```
-gui/
-├── app.py              # Flask server and Socket.IO
-├── templates/
-│   └── index.html      # Main interface
-├── static/
-│   ├── style.css       # Styling
-│   └── main.js         # Client-side logic
-└── README.md           # This file
-```
-
-### Extending the GUI
-
-1. **Add new controls**: Edit `index.html`
-2. **Add handlers**: Update `main.js` and `app.py`
-3. **Style changes**: Modify `style.css`
-4. **New features**: Extend Socket.IO events
-
-### Testing
-
-```bash
-# Run in development mode
-export FLASK_ENV=development
-python app.py
-
-# Run tests
-pytest tests/test_gui.py
-```
-
-## Browser Compatibility
-
-- **Chrome/Edge**: Full support (recommended)
-- **Firefox**: Full support
-- **Safari**: Full support
-- **Mobile browsers**: Basic support (touch events)
-
-## Security Notes
-
-- GUI binds to 0.0.0.0 for network access
-- No authentication by default
-- Add authentication for production use
-- Use HTTPS for remote access
-
-## Credits
-
-- Built with Flask and Socket.IO
-- Charts powered by Chart.js
-- Icons and styling inspired by modern DAW interfaces
-- Real-time architecture based on professional audio software
-
-## License
-
-MIT License - Part of the Performia System
-
-## Support
-
-For issues or questions about the GUI:
-1. Check this README
-2. See main Performia documentation
-3. Open an issue on GitHub
+The GUI will eventually provide:
+- Complete visual control over all system parameters
+- Real-time visualization of agent interactions
+- Recording and playback capabilities
+- MIDI integration
+- Multi-user collaboration support
+- Cloud-based preset sharing
 
 ---
 
-**Enjoy controlling your AI musical ensemble! 🎵🎛️**
+**Status**: Under active development - expect frequent updates!
+
+For the main Performia System documentation, see the parent directory README.
